@@ -1,5 +1,6 @@
 import java.sql.*;
 
+
 public class Visualisierung {
 
 	public static void main(String[] args) {
@@ -9,26 +10,30 @@ public class Visualisierung {
 		try {
 			
 		
-		Class.forName("oracle.jdbc.driver.OracleDriver");
-
-		Connection my_con = DriverManager.getConnection("jdbc:oracle:thin:@dbl48.beuthhochschule.de:1521:oracle", "s80408", "GUW7yfaoK");
+		DriverManager.registerDriver (new oracle.jdbc.driver.OracleDriver());
+		Connection my_con = DriverManager.getConnection("jdbc:oracle:thin:@dbl48.beuthhochschule.de:1521:oracle", "s898676", "GUW7yfaoK");
 		
 		Statement my_stmt = my_con.createStatement();
 		
-		String query = "select kdnr,firma from kdst";
+		String query = "SELECT Table_Name FROM all_tables";
 		
-		ResultSet my_result=my_stmt.executeQuery(query);
+		ResultSet my_result = my_stmt.executeQuery(query);
 		
-		while(my_result.next()) {
-			int nr = my_result.getInt(1);
-			String kd_name = my_result.getString("firma"); }
+		my_result.next();
+		int nr = my_result.getInt(1);
+		String kd_name = my_result.getString("Table_Name");
+
+		System.out.println(kd_name);
+	
+		
 		
 		my_con.close();
 		
 		}
+		
 		catch(Exception e) {
 			
-			
+			System.out.println("didn´t work");
 		}
 		
 	
