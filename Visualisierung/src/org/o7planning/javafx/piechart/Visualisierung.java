@@ -1,9 +1,27 @@
+package org.o7planning.javafx.piechart;
+
 import java.sql.*;
 
-public class Visualisierung {
+import javafx.stage.Stage;
+import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.geometry.Side;
+import javafx.scene.Scene;
+import javafx.scene.chart.PieChart;
+import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 
-	public static void main(String[] args) throws Exception {
-		// TODO Auto-generated method stub
+
+public class Visualisierung extends Application { 
+
+	public static void main(String[] args) {
+		launch(args);
+
+	
 
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
@@ -30,15 +48,60 @@ public class Visualisierung {
 			my_con.close();
 
 		}
+		catch (Exception ex) {
 
-		catch (SQLException ex) {
-
-			System.out.println("didnt work"+ ex.getMessage());
+			System.out.println("didnt work?"+ ex.getMessage());
 			System.out.println(ex.getMessage());
 			System.out.println(ex.getMessage());
 
 		}
 
 	}
+	
+	 public void start(Stage primaryStage) throws Exception {
+		 
+	        PieChart pieChart = new PieChart();
+	 
+	        PieChart.Data slice1 = new PieChart.Data("Informierte User", 25);
+	        PieChart.Data slice2 = new PieChart.Data("Uninformierte User", 75);
+	     
+	        pieChart.getData().add(slice1);
+	        pieChart.getData().add(slice2);
+	    
+	        
+	        pieChart.setPrefSize(400, 300);
+	 
+	        pieChart.setLegendSide(Side.BOTTOM);
+	        pieChart.setStartAngle(30);
+	 
+	        final Label caption = new Label("Wie viele der User haben sich über den Great American Boykott infomiert?");
+	        caption.setTextFill(Color.BLACK);
+	        caption.setStyle("-fx-font: 12 arial;");
+	 
+	        for (final PieChart.Data data : pieChart.getData()) {
+	            data.getNode().addEventHandler(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+	                @Override
+	                public void handle(MouseEvent e) {
+	                    caption.setTranslateX(e.getSceneX());
+	                    caption.setTranslateY(e.getSceneY());
+	 
+	                    caption.setText(String.valueOf(data.getPieValue()));
+	                }
+	            });
+	        }
+	 
+	        primaryStage.setTitle("JavaFX PieChart (o7planning.org)");
+	        AnchorPane root = new AnchorPane();
+	        root.getChildren().addAll(pieChart, caption);
+	        
+	        
+	        
+	 
+	        Scene scene = new Scene(root, 500, 500);
+	 
+	        primaryStage.setScene(scene);
+	 
+	        primaryStage.show();
+	    }
 
 }
