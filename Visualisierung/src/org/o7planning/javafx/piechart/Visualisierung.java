@@ -17,57 +17,33 @@ import javafx.stage.Stage;
 
 
 public class Visualisierung extends Application { 
+	
+	static String query;
+	static String query2;
+	int informed;
+	int not_informed;
+	int anzahl;
+
+
 
 	public static void main(String[] args) {
 		launch(args);
-
-	
-
-		try {
-			Class.forName("oracle.jdbc.driver.OracleDriver");
-
-			Connection my_con = DriverManager.getConnection("jdbc:oracle:thin:@dbl43.beuth-hochschule.de:1521:rispdb1", "s898676", "student");
-
-			Statement my_stmt = my_con.createStatement();
-
-			String query = "SELECT * FROM all_tables";
-
-			ResultSet my_result = my_stmt.executeQuery(query);
-
-			while (my_result.next()) {
-				String nr = my_result.getString(1);
-				String kd_name = my_result.getString("table_name");
-
-				System.out.println(kd_name);
-				System.out.println(nr);
-
-
-
-			}
-			
-			my_con.close();
-
-		}
-		catch (Exception ex) {
-
-			System.out.println("didnt work?"+ ex.getMessage());
-			System.out.println(ex.getMessage());
-			System.out.println(ex.getMessage());
-
-		}
 
 	}
 	
 	 public void start(Stage primaryStage) throws Exception {
 		 
+		 	verbindungsaufbau();
+		 
 	        PieChart pieChart = new PieChart();
 	 
-	        PieChart.Data slice1 = new PieChart.Data("Informierte User", 25);
-	        PieChart.Data slice2 = new PieChart.Data("Uninformierte User", 75);
+	        PieChart.Data slice1 = new PieChart.Data("Informierte User", informed);
+	        PieChart.Data slice2 = new PieChart.Data("Uninformierte User", not_informed);
 	     
 	        pieChart.getData().add(slice1);
 	        pieChart.getData().add(slice2);
 	    
+	      
 	        
 	        pieChart.setPrefSize(400, 300);
 	 
@@ -104,4 +80,49 @@ public class Visualisierung extends Application {
 	        primaryStage.show();
 	    }
 
+	 public void verbindungsaufbau(){
+		 try {
+				Class.forName("oracle.jdbc.driver.OracleDriver");
+
+				Connection my_con = DriverManager.getConnection("jdbc:oracle:thin:@dbl43.beuth-hochschule.de:1521:rispdb1", "s898676", "student");
+
+				Statement my_stmt = my_con.createStatement();
+
+				query = "SELECT Count(id) FROM aoldata.querydata";
+				
+				query2 = "SELECT Count(id) FROM aoldata.querydata Where query LIKE '%immigrant%boycot%' OR query LIKE '%migrant boycot%' OR query LIKE '%great american boycot%' OR query LIKE '%discrimination protest%'OR query LIKE '%migrant strike%'";
+
+
+				ResultSet my_result = my_stmt.executeQuery(query2);			
+
+				while (my_result.next()) {
+					informed = my_result.getInt(1);
+
+					System.out.println(informed);
+										
+				}
+				
+				ResultSet my_result2 = my_stmt.executeQuery(query);
+		
+				while (my_result2.next()) {
+					not_informed = my_result2.getInt(1);
+					System.out.println(not_informed);
+										
+					
+				}
+				
+		
+				
+				my_con.close();
+
+			}
+			catch (Exception ex) {
+
+				System.out.println("didnt work?"+ ex.getMessage());
+				System.out.println(ex.getMessage());
+				System.out.println(ex.getMessage());
+
+			}
+		 
+	 }
 }
